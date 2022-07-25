@@ -1,3 +1,4 @@
+from multiprocessing.sharedctypes import Value
 from search_index_helper import SearchIndexHelper
 from empty_positions import EmptyPositionArray
 from element import Element
@@ -7,13 +8,18 @@ class Archive:
      Fixed size archive data structure
     """
     def __init__(self, archive_size: int) -> None:
-        self.__archive_size = archive_size
+        if isinstance(archive_size, int): 
+            self.__archive_size = archive_size
+        else:
+            raise ValueError('Unsuported type for archive size. Please enter a number.')
         self.__empty_positions = EmptyPositionArray(archive_size)
         self.__search_index_helper = SearchIndexHelper()
         self.__archive = ["Empty"] * archive_size if isinstance(archive_size, int) else None
 
     def insert_new_element(self, unique_id: int, value: int) -> None:
         try:
+            if not (isinstance(unique_id, int) and isinstance(value, int)):
+                raise ValueError("Usuported type for this parameters. Please enter a number.")
             if self.__search_index_helper.search_element(unique_id):
                 raise ValueError("This ID has been already used. Try a different one.")
                 
@@ -50,6 +56,9 @@ class Archive:
             unique_id (int): to be removed element's unique id
         """
         try:
+            if not isinstance(unique_id, int):
+                raise ValueError("Usuported type for this parameters. Please enter a number.")
+                
             # Search for element in indexed list and remove it
             indexed_element = self.search_element(unique_id)
             self.__search_index_helper.remove_element(unique_id)
@@ -63,11 +72,16 @@ class Archive:
             print(e)
 
     def search_element(self, unique_id: int) -> list:
-        indexed_element = self.__search_index_helper.search_element(unique_id)
-        if indexed_element:
-            return indexed_element
+        try: 
+            if not isinstance(unique_id, int):
+                    raise ValueError("Usuported type for this parameters. Please enter a number.")
 
-        raise ValueError("There's no element with the ID searched.")
+            indexed_element = self.__search_index_helper.search_element(unique_id)
+            if not indexed_element:
+                raise ValueError("There's no element with the ID searched.")
+            return indexed_element
+        except Exception as e:
+            print(e)
 
     def list_ordered_elements(self) -> None:
         indexed_elements = self.__search_index_helper.indexed_elements # Already ordered list of elements

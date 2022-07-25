@@ -19,14 +19,7 @@ class EmptyPositionArray:
         """
 
         self.__array.append(empty_position_index)
-        self.__array = sorted(self.__array) # Verify relevance of adding this later!
-        """ 
-            Possible way to avoid using sorted method is by checking if 
-            empty_position_index < first_array_element, in order to change places:
-            -> insert(empty_position_index, 0)
-
-            Certainly not the best performance options.
-        """
+        self.__array = sorted(self.__array)
         self.first_empty_position = self.__array[0] 
 
     def use_empty_position(self) -> int:
